@@ -7,17 +7,17 @@ const port = 3005;
 const server = express();
 server.use(express.static("frontend"));
 server.use(onEachRequest);
-//server.get("/api/actor/:name/costars", onGetCostars);
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
-//server.get("/api/");
+server.get("/api/activeAddresses/ETH");
+server.get("/api/activeAddresses/LINK");
+server.get("/api/transactionHash/04aa");
+server.get("/api/transactionHashTimestamp/04aa");
+server.get("/api/blockHeight/7");
+server.get("/api/blockHash/0002a81");
+server.get("/api/blockHashTransactions/0002a81");
+server.get("/api/currencyAndTimestampAddress/a0324425e7");
+server.get("/api/addressCurrencyAmount/a0324425e7");
+server.get("/api/addressCurrencyAmountSum/a0324425e7");
+server.get("/api/addressAllTransactions/a0324425e7");
 server.listen(port, onServerReady);
 
 function onServerReady() {
