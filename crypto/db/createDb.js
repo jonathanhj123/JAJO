@@ -21,7 +21,7 @@ await db.query("drop table if exists pricepoint");
 //lav block table
 await db.query(` 
     create table block (
-        block_id  integer unique not null references transaction (block_id),
+        block_id  integer unique not null,
         date  text  not null,
         block_hash text  not null
     )
@@ -31,7 +31,7 @@ await upload(
   db,
   "db/block.csv",
   `
-    copy block (block_id, date, previoushash-block_id, block_hash)
+    copy block (block_id, date, block_hash)
     from stdin
     with csv header encoding 'utf-8'
 `,
@@ -40,7 +40,7 @@ await upload(
 //Lav transaction table
 await db.query(`
     create table transaction (
-        block_id  integer not null,
+        block_id  integer references block (block_id),
         transaction_id   integer unique not null,
         transactions_hash    text not null,
         hash text not null
@@ -50,7 +50,7 @@ await upload(
   db,
   "db/transaction.csv",
   `
-    copy transaction (block_block_id, transaction_id, transactions_hash)
+    copy transaction (transaction_id, transactions_hash, block_block_id)
     from stdin
     with csv header encoding 'utf-8'
 `,
@@ -71,7 +71,7 @@ await upload(
   db,
   "db/transfers.csv",
   `
-    copy transfers (transaction_id, currency_id, address_id)
+    copy transfers (transaction_id,sender_adress_id, receiver_address_id, amount , currency_id)
     from stdin
     with csv header encoding 'utf-8'
 `,
@@ -81,7 +81,7 @@ await upload(
 await db.query(`
     create table currency (
         name    text not null,
-        currency_id    integer unique not null references wallet_currency (currency_id)
+        currency_id    integer unique not null
     )   
 `);
 //bigint = 64 bit heltal
