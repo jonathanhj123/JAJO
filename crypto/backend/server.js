@@ -19,7 +19,7 @@ function onEachRequest(request, response, next) {
   next();
 }
 
-async function onGetCostars(request, response) {
+/*async function onGetCostars(request, response) {
   const name = request.params.name;
   const dbResult = await db.query(
     `
@@ -34,3 +34,4 @@ async function onGetCostars(request, response) {
   );
   response.json(dbResult.rows);
 }
+*/
