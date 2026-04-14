@@ -56,32 +56,12 @@ await upload(
 `,
 );
 
-//Lav transfers table
-await db.query(`
-    create table transfers (
-        sender_address_id integer unique not null reference address (address_id),
-        receiver_address_id integer unique not null reference address (address_id),
-        transaction_id  integer not null,
-        currency_id   integer not null,
-        address_id integer not null
-    )
-`);
-//real = float (32bit floating)
-await upload(
-  db,
-  "db/transfers.csv",
-  `
-    copy transfers (transaction_id,sender_adress_id, receiver_address_id, amount , currency_id)
-    from stdin
-    with csv header encoding 'utf-8'
-`,
-);
-
 //Lav currency table
 await db.query(`
     create table currency (
         name    text not null,
         currency_id    integer unique not null
+        symbol text not null
     )   
 `);
 //bigint = 64 bit heltal
@@ -101,48 +81,13 @@ await db.query(`
     create table address (
         address_id    integer unique not null references wallet (address_id),
         address_name    text not null,
-        wallet_id int not null
     )   
 `);
 await upload(
   db,
   "db/address.csv",
   `
-    copy address (address_id, address_name, wallet_id)
-    from stdin
-    with csv header encoding 'utf-8'
-`,
-);
-
-//Lav wallet_currency table
-await db.query(`
-    create table wallet_currency (
-        currency_id integer not null,
-        wallet_id   integer not null
-    )   
-`);
-await upload(
-  db,
-  "db/wallet_currency.csv",
-  `
-    copy wallet_currency (currency_id, wallet_id)
-    from stdin
-    with csv header encoding 'utf-8'
-`,
-);
-
-//Lav wallet table
-await db.query(`
-    create table wallet (
-        wallet_id integer unique not null references wallet_currency (wallet_id),
-        address_id integer not null
-    )   
-`);
-await upload(
-  db,
-  "db/wallet.csv",
-  `
-    copy wallet (wallet_id, address_id)
+    copy address (address_id, address_name)
     from stdin
     with csv header encoding 'utf-8'
 `,
@@ -161,6 +106,27 @@ await upload(
   db,
   "db/pricepoint.csv"`
     copy pricepoint (timestamp, usd_price, currency_id)
+    from stdin
+    with csv header encoding 'utf-8'
+`,
+);
+
+//Lav transfers table
+await db.query(`
+    create table transfers (
+        sender_address_id integer unique not null reference address (address_id),
+        receiver_address_id integer unique not null reference address (address_id),
+        transaction_id  integer not null,
+        currency_id   integer not null,
+        address_id integer not null
+    )
+`);
+//real = float (32bit floating)
+await upload(
+  db,
+  "db/transfers.csv",
+  `
+    copy transfers (transaction_id,sender_adress_id, receiver_address_id, amount , currency_id)
     from stdin
     with csv header encoding 'utf-8'
 `,
