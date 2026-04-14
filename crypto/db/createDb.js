@@ -29,7 +29,7 @@ await upload(
   db,
   "db/block.csv",
   `
-    copy block (block_id, date, block_hash)
+    copy block (block_id, block_hash, date)
     from stdin
     with csv header encoding 'utf-8'
 `,
