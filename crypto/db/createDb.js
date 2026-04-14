@@ -9,12 +9,12 @@ const timestamp = (await db.query("select now() as timestamp")).rows[0][
 console.log(`Recreating database on ${timestamp}...`);
 
 //Drop alle gamle tables ved opstart
-await db.query("drop table if exists block");
-await db.query("drop table if exists transaction");
-await db.query("drop table if exists transfers");
-await db.query("drop table if exists currency");
+await db.query("drop table if exists transfer");
 await db.query("drop table if exists address");
 await db.query("drop table if exists pricepoint");
+await db.query("drop table if exists currency");
+await db.query("drop table if exists transaction");
+await db.query("drop table if exists block");
 
 //lav block table
 await db.query(` 
@@ -48,7 +48,7 @@ await upload(
   db,
   "db/transaction.csv",
   `
-    copy transaction (transaction_id, transactions_hash, block_block_id)
+    copy transaction (transaction_id, transactions_hash, block_id)
     from stdin
     with csv header encoding 'utf-8'
 `,
