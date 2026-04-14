@@ -41,7 +41,6 @@ await db.query(`
         block_id  integer references block (block_id),
         transaction_id   integer unique not null,
         transactions_hash    text not null,
-        hash text not null
     )
 `);
 await upload(
