@@ -37,7 +37,8 @@ await db.query(`
     create table transaction (
         block_id  integer not null,
         transaction_id   integer unique not null,
-        transactions_hash    text not null
+        transactions_hash    text not null,
+        hash text not null
     )
 `);
 await upload(db, 'db/transaction.csv', `
@@ -49,6 +50,8 @@ await upload(db, 'db/transaction.csv', `
 //Lav transfers table
 await db.query(`
     create table transfers (
+        sender_address_id integer unique not null reference address (address_id),
+        receiver_address_id integer unique not null reference address (address_id),
         transaction_id  integer not null,
         currency_id   integer not null,
         address_id integer not null
@@ -117,6 +120,21 @@ await upload (db, 'db/wallet.csv', `
     from stdin
     with csv header encoding 'utf-8'
 `);
+
+//pricepoint table
+await db.query(`
+    create table pricepoint (
+        timestamp text not null,
+        usd_price integer not null,
+        currency_id not null
+    )
+`);
+
+await upload (db, 'db/pricepoint.csv' `
+    copy pricepoint (timestamp, usd_price, currency_id)
+    from stdin
+    with csv header encoding 'utf-8'
+`)
 
 await db.end();
 console.log('Database successfully recreated.');
