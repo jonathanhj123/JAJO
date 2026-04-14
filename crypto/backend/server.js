@@ -7,7 +7,7 @@ const port = 3005;
 const server = express();
 server.use(express.static("frontend"));
 server.use(onEachRequest);
-server.get("/api/actor/:name/costars", onGetCostars);
+//server.get("/api/actor/:name/costars", onGetCostars);
 server.listen(port, onServerReady);
 
 function onServerReady() {
