@@ -8,9 +8,9 @@ const port = 3005;
 const server = express();
 server.use(express.static("frontend"));
 server.use(onEachRequest);
-server.get("/api/activeAddresses/:name", getActiveAdresses());
-server.get("/api/activeAddresses/:name", getACtiveAdresses());
-server.get("/api/transactionHash/04aa");
+server.get("/api/activeAddresses/:name", getActiveAdresses);
+server.get("/api/activeAddresses/:name", getActiveAdresses);
+server.get("/api/transactionHash/:hash", getTransactionOnHash);
 server.get("/api/transactionHashTimestamp/04aa");
 server.get("/api/blockHeight/7");
 server.get("/api/blockHash/0002a81");
@@ -32,8 +32,36 @@ function onEachRequest(request, response, next) {
 
 async function getActiveAdresses(request, response) {
   const name = request.params.name;
+  const dbResult = await db.query(
+    `
+    SELECT DISTINCT a.address_name
+    FROM address a
+    JOIN transfers t ON (
+        t.sender_address_id = a.address_id
+        OR t.receiver_address_id = a.address_id
+    )
+    JOIN currency c ON c.currency_id = t.currency_id
+    WHERE c.symbol = $1;
+    `,
+    [name],
+  );
 
-  response.json(dbResult);
+  response.json(dbResult.rows);
+}
+
+async function getTransactionOnHash(request, response) {
+  const hash = request.params.hash;
+  const dbResult = await db.query(
+    `
+    select distinct *
+    from transfers tsf
+    join transaction tx on tx.transaction_id = tsf.transaction_id
+    where tx.transactions_hash = $1
+    `,
+    [hash],
+  );
+
+  response.json(dbResult.rows);
 }
 
 /*async function onGetCostars(request, response) {
