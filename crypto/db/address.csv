@@ -1,9 +1,9 @@
-address_id, address_name, wallet_id
-0,(coinbase),0
-1,a0324425e7,1
-2,b07c7e7df3,2
-3,d03894efe8,3
-4,f076a8c8b0,4
-5,c0acb3be5f,5
-6,e088c8d932,6
-7,3.2390,7
+address_id, address_name
+0,(coinbase)
+1,a0324425e7
+2,b07c7e7df3
+3,d03894efe8
+4,f076a8c8b0
+5,c0acb3be5f
+6,e088c8d932
+7,3.2390
