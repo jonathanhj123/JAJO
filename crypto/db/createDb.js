@@ -9,9 +9,9 @@ const timestamp = (await db.query("select now() as timestamp")).rows[0][
 console.log(`Recreating database on ${timestamp}...`);
 
 //Drop alle gamle tables ved opstart
-await db.query("drop table if exists transfer");
+await db.query("drop table if exists transfers");
 await db.query("drop table if exists address");
-await db.query("drop table if exists pricepoint");
+await db.query("drop table if exists pricepoints");
 await db.query("drop table if exists currency");
 await db.query("drop table if exists transaction");
 await db.query("drop table if exists block");
@@ -40,7 +40,7 @@ await db.query(`
     create table transaction (
         block_id  integer references block (block_id),
         transaction_id   integer unique not null,
-        transactions_hash    text not null,
+        transactions_hash    text not null
     )
 `);
 await upload(
@@ -57,7 +57,7 @@ await upload(
 await db.query(`
     create table currency (
         name    text not null,
-        currency_id    integer unique not null
+        currency_id    integer unique not null,
         symbol text not null
     )   
 `);
@@ -67,7 +67,7 @@ await upload(
   db,
   "db/currency.csv",
   `
-    copy currency (name, currency_id)
+    copy currency (currency_id, name,symbol)
     from stdin
     with csv header encoding 'utf-8'
 `,
@@ -77,7 +77,7 @@ await upload(
 await db.query(`
     create table address (
         address_id    integer unique not null,
-        address_name    text not null,
+        address_name    text not null
     )   
 `);
 await upload(
@@ -90,9 +90,9 @@ await upload(
 `,
 );
 
-//pricepoint table
+//pricepoints table
 await db.query(`
-    create table pricepoint (
+    create table pricepoints (
         timestamp text not null,
         usd_price integer not null,
         currency_id integer not null references currency (currency_id)
@@ -101,8 +101,9 @@ await db.query(`
 
 await upload(
   db,
-  "db/pricepoint.csv"`
-    copy pricepoint (timestamp, usd_price, currency_id)
+  "db/pricepoints.csv",
+  `
+    copy pricepoints (timestamp, currency_id, usd_price)
     from stdin
     with csv header encoding 'utf-8'
 `,
@@ -111,11 +112,11 @@ await upload(
 //Lav transfers table
 await db.query(`
     create table transfers (
-        sender_address_id integer not null reference address (address_id),
-        receiver_address_id integer not null reference address (address_id),
+        sender_address_id integer not null references address (address_id),
+        receiver_address_id integer not null references address (address_id),
         transaction_id  integer not null,
         currency_id   integer not null,
-        address_id integer not null
+        amount integer not null
     )
 `);
 //real = float (32bit floating)
@@ -123,7 +124,7 @@ await upload(
   db,
   "db/transfers.csv",
   `
-    copy transfers (transaction_id,sender_adress_id, receiver_address_id, amount , currency_id)
+    copy transfers (transaction_id,sender_address_id, receiver_address_id, amount , currency_id)
     from stdin
     with csv header encoding 'utf-8'
 `,
