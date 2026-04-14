@@ -19,10 +19,10 @@ await db.query('drop table if exists wallet');
 //lav block table
 await db.query(` 
     create table block (
-        block_id   integer,
-        date  text,
-        PreviousHash-block_id text,
-        block_hash text
+        block_id  integer unique not null references transaction (block_id),
+        date  text  not null,
+        PreviousHash-block_id text not null,
+        block_hash text  not null
     )
 `);
 //importere csv data ind i SQL server
@@ -35,9 +35,9 @@ await upload(db, 'db/block.csv', `
 //Lav transaction table
 await db.query(`
     create table transaction (
-        block_block_id    integer,
-        transaction_id   integer,
-        transactions_hash    text
+        block_id  integer not null,
+        transaction_id   integer unique not null,
+        transactions_hash    text not null
     )
 `);
 await upload(db, 'db/transaction.csv', `
@@ -49,9 +49,9 @@ await upload(db, 'db/transaction.csv', `
 //Lav transfers table
 await db.query(`
     create table transfers (
-        transaction_id foreign key  integer,
-        currency_id foreign key   integer,
-        address_id integer
+        transaction_id  integer not null,
+        currency_id   integer not null,
+        address_id integer not null
     )
 `);
 //real = float (32bit floating)
@@ -62,12 +62,11 @@ await upload(db, 'db/transfers.csv', `
 `);
 
 
-
 //Lav currency table
 await db.query(`
     create table currency (
-        name    text,
-        currency_id    integer
+        name    text not null,
+        currency_id    integer unique not null references wallet_currency (currency_id)
     )   
 `)
 //bigint = 64 bit heltal
@@ -82,9 +81,9 @@ await upload (db, 'db/currency.csv', `
 //Lav address table
 await db.query(`
     create table address (
-        address_id    integer,
-        address_name    text,
-        wallet_id int
+        address_id    integer unique not null references wallet (address_id),
+        address_name    text not null,
+        wallet_id int not null
     )   
 `)
 await upload (db, 'db/address.csv', `
@@ -96,8 +95,8 @@ await upload (db, 'db/address.csv', `
 //Lav wallet_currency table
 await db.query(`
     create table wallet_currency (
-        currency_id integer,
-        wallet_id   integer
+        currency_id integer not null,
+        wallet_id   integer not null
     )   
 `)
 await upload (db, 'db/wallet_currency.csv', `
@@ -109,8 +108,8 @@ await upload (db, 'db/wallet_currency.csv', `
 //Lav wallet table
 await db.query(`
     create table wallet (
-        wallet_id integer,
-        address_id integer
+        wallet_id integer unique not null references wallet_currency (wallet_id),
+        address_id integer not null
     )   
 `)
 await upload (db, 'db/wallet.csv', `
