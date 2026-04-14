@@ -13,9 +13,7 @@ await db.query("drop table if exists block");
 await db.query("drop table if exists transaction");
 await db.query("drop table if exists transfers");
 await db.query("drop table if exists currency");
-await db.query("drop table if exists wallet_currency");
 await db.query("drop table if exists address");
-await db.query("drop table if exists wallet");
 await db.query("drop table if exists pricepoint");
 
 //lav block table
