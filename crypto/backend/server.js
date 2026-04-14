@@ -1,5 +1,6 @@
 import express from "express";
 import { pool } from "../db/connect.js";
+import req from "express/lib/request.js";
 
 const db = pool();
 
@@ -7,8 +8,8 @@ const port = 3005;
 const server = express();
 server.use(express.static("frontend"));
 server.use(onEachRequest);
-server.get("/api/activeAddresses/ETH");
-server.get("/api/activeAddresses/LINK");
+server.get("/api/activeAddresses/:name", getActiveAdresses());
+server.get("/api/activeAddresses/:name", getACtiveAdresses());
 server.get("/api/transactionHash/04aa");
 server.get("/api/transactionHashTimestamp/04aa");
 server.get("/api/blockHeight/7");
@@ -27,6 +28,12 @@ function onServerReady() {
 function onEachRequest(request, response, next) {
   console.log(new Date(), request.method, request.url);
   next();
+}
+
+async function getActiveAdresses(request, response) {
+  const name = request.params.name;
+
+  response.json(dbResult);
 }
 
 /*async function onGetCostars(request, response) {
