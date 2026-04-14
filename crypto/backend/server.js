@@ -8,6 +8,16 @@ const server = express();
 server.use(express.static("frontend"));
 server.use(onEachRequest);
 //server.get("/api/actor/:name/costars", onGetCostars);
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
+//server.get("/api/");
 server.listen(port, onServerReady);
 
 function onServerReady() {
