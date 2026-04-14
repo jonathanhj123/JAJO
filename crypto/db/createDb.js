@@ -79,7 +79,7 @@ await upload(
 //Lav address table
 await db.query(`
     create table address (
-        address_id    integer unique not null references wallet (address_id),
+        address_id    integer unique not null,
         address_name    text not null,
     )   
 `);
@@ -98,7 +98,7 @@ await db.query(`
     create table pricepoint (
         timestamp text not null,
         usd_price integer not null,
-        currency_id not null
+        currency_id integer not null references currency (currency_id)
     )
 `);
 
@@ -114,8 +114,8 @@ await upload(
 //Lav transfers table
 await db.query(`
     create table transfers (
-        sender_address_id integer unique not null reference address (address_id),
-        receiver_address_id integer unique not null reference address (address_id),
+        sender_address_id integer not null reference address (address_id),
+        receiver_address_id integer not null reference address (address_id),
         transaction_id  integer not null,
         currency_id   integer not null,
         address_id integer not null
