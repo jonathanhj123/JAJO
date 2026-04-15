@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import { pool } from "../db/connect.js";
 import req from "express/lib/request.js";
 
@@ -11,10 +11,10 @@ server.use(onEachRequest);
 server.get("/api/activeAddresses/:name", getActiveAdresses);
 server.get("/api/activeAddresses/:name", getActiveAdresses);
 server.get("/api/transactionHash/:hash", getTransactionOnHash);
-server.get("/api/transactionHashTimestamp/04aa");
-server.get("/api/blockHeight/7");
-server.get("/api/blockHash/0002a81");
-server.get("/api/blockHashTransactions/0002a81");
+server.get("/api/transactionHashTimestamp/:hash", getTimeStampOnHash);
+server.get("/api/blockHeight/:height", returnBlockOnHeight);
+server.get("/api/blockHash/:hash", blockExistsOnHash);
+server.get("/api/blockHashTransactions/:hash", transactionsOnBlockHash);
 server.get("/api/currencyAndTimestampAddress/a0324425e7");
 server.get("/api/addressCurrencyAmount/a0324425e7");
 server.get("/api/addressCurrencyAmountSum/a0324425e7");
@@ -28,6 +28,51 @@ function onServerReady() {
 function onEachRequest(request, response, next) {
   console.log(new Date(), request.method, request.url);
   next();
+}
+
+async function transactionsOnBlockHash(request, response) {
+  const hash = request.params.hash;
+  const dbResult = await db.query(
+    `
+    select t.transactions_hash
+    from transaction t
+    join block b on t.block_id = b.block_id
+    where b.block_hash = $1
+    `,
+    [hash],
+  );
+  response.json(dbResult.rows);
+}
+
+async function blockExistsOnHash(request, response) {
+  const hash = request.params.hash;
+  const dbResult = await db.query(
+    `
+    select exists(
+    select 1
+    from block 
+    where block_hash = $1
+    )
+    `,
+    [hash],
+  );
+  response.json(dbResult.rows);
+}
+
+async function returnBlockOnHeight(request, response) {
+  const height = request.params.height;
+  const dbResult = await db.query(
+    `
+    select exists(
+    select 1
+    from block b
+    where block_id = $1
+    )
+    `,
+    [height],
+  );
+
+  response.json(dbResult.rows);
 }
 
 async function getActiveAdresses(request, response) {
@@ -56,6 +101,21 @@ async function getTransactionOnHash(request, response) {
     select distinct *
     from transfers tsf
     join transaction tx on tx.transaction_id = tsf.transaction_id
+    where tx.transactions_hash = $1
+    `,
+    [hash],
+  );
+
+  response.json(dbResult.rows);
+}
+
+async function getTimeStampOnHash(request, response) {
+  const hash = request.params.hash;
+  const dbResult = await db.query(
+    `
+    select distinct date
+    from block b
+    join transaction tx on tx.block_id = b.block_id
     where tx.transactions_hash = $1
     `,
     [hash],
