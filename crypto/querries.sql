@@ -44,3 +44,57 @@ join currency c on tsf.currency_id = c.currency_id
 JOIN address a ON (tsf.sender_address_id = a.address_id OR tsf.receiver_address_id = a.address_id)
 where a.address_name= 'a0324425e7'
 group by symbol;
+
+select c.symbol, MIN(date) as first, MAX(date) as last
+from block b
+join transaction tx on b.block_id =  tx.block_id
+join transfers tsf on tsf.transaction_id = tx.transaction_id
+join currency c on tsf.currency_id = c.currency_id
+JOIN address a ON (tsf.sender_address_id = a.address_id OR tsf.receiver_address_id = a.address_id)
+where a.address_name= 'a0324425e7'
+group by symbol;
+
+
+
+with tmp as (
+    select c.symbol, sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.receiver_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.symbol
+union all
+    select c.symbol, -sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.sender_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.symbol
+    )
+select symbol, sum(amount)
+from tmp
+group by symbol;
+
+
+with tmp as (
+    select c.symbol, sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.receiver_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.symbol
+union all
+    select c.symbol, -sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.sender_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.symbol
+union all
+    select *
+    from pricepoints
+    group by timestamp;
+    )
+select symbol, sum(amount)
+from tmp
+group by symbol;

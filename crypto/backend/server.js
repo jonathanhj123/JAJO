@@ -20,7 +20,7 @@ server.get(
   getActiveCryptoOnAddress,
 );
 server.get("/api/addressCurrencyAmount/:address", GetAmountOnAddress);
-server.get("/api/addressCurrencyAmountSum/a0324425e7");
+server.get("/api/addressCurrencyAmountSum/:address", GetAmountOfUsdOnAddress);
 server.get("/api/addressAllTransactions/a0324425e7");
 server.listen(port, onServerReady);
 
@@ -31,6 +31,37 @@ function onServerReady() {
 function onEachRequest(request, response, next) {
   console.log(new Date(), request.method, request.url);
   next();
+}
+
+async function GetAmountOfUsdOnAddress(request, response) {
+  const address = request.params.address;
+  const dbResult = await db.query(
+    `
+    with tmp as (
+    select c.currency_id, sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.receiver_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.currency_id
+union all
+    select c.currency_id, -sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.sender_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.currency_id
+    ),holding as (
+    select currency_id, sum(amount) as amount
+    from tmp
+    group by currency_id
+    )
+select  sum(amount*(select usd_price from pricepoints where currency_id = h.currency_id order by timestamp desc limit 1))
+from holding h;
+    `,
+    [address],
+  );
+  response.json(dbResult.rows);
 }
 
 async function GetAmountOnAddress(request, response) {
