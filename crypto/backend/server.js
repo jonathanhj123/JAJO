@@ -15,13 +15,10 @@ server.get("/api/transactionHashTimestamp/:hash", getTimeStampOnHash);
 server.get("/api/blockHeight/:height", returnBlockOnHeight);
 server.get("/api/blockHash/:hash", blockExistsOnHash);
 server.get("/api/blockHashTransactions/:hash", transactionsOnBlockHash);
-server.get(
-  "/api/currencyAndTimestampAddress/:address",
-  getActiveCryptoOnAddress,
-);
-server.get("/api/addressCurrencyAmount/a0324425e7");
-server.get("/api/addressCurrencyAmountSum/a0324425e7");
-server.get("/api/addressAllTransactions/a0324425e7");
+server.get("/api/currencyAndTimestampAddress/:address",getActiveCryptoOnAddress,);
+server.get("/api/addressCurrencyAmount/a0324425e7/:address");
+server.get("/api/addressCurrencyAmountSum/a0324425e7/:address", getSumOfAddressValue);
+server.get("/api/addressAllTransactions/a0324425e7/:address", getAllTransactions);
 server.listen(port, onServerReady);
 
 function onServerReady() {
@@ -146,6 +143,13 @@ async function getTimeStampOnHash(request, response) {
   response.json(dbResult.rows);
 }
 
+async function getSumOfAddressValue(request, response) {
+  
+}
+
+async function getAllTransactions(request, response) {
+
+}
 /*async function onGetCostars(request, response) {
   const name = request.params.name;
   const dbResult = await db.query(
