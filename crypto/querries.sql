@@ -98,3 +98,32 @@ union all
 select  sum(amount*(select usd_price from pricepoints where currency_id = h.currency_id order by timestamp desc limit 1))
 from holding h;
 
+
+with currency as (
+
+select c.symbol as currency
+from currency c
+where c.symbol = 
+join address a on a.address_name = $1
+join transfers t on t.sender_address_id = a.address_id OR t.receiver_address_id = a.address_id
+
+
+union all
+
+select t.amount as received
+from transfers t
+where t.receiver_address_id = 
+
+union all
+
+select t.amount as sent
+from transfers t
+where t.sender_address_id = 
+
+)
+
+with usd as (
+
+select 
+
+)
