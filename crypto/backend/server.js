@@ -205,7 +205,6 @@ async function getTimeStampOnHash(request, response) {
 
   response.json(dbResult.rows);
 }
-
 /*async function onGetCostars(request, response) {
   const name = request.params.name;
   const dbResult = await db.query(
