@@ -15,7 +15,10 @@ server.get("/api/transactionHashTimestamp/:hash", getTimeStampOnHash);
 server.get("/api/blockHeight/:height", returnBlockOnHeight);
 server.get("/api/blockHash/:hash", blockExistsOnHash);
 server.get("/api/blockHashTransactions/:hash", transactionsOnBlockHash);
-server.get("/api/currencyAndTimestampAddress/a0324425e7");
+server.get(
+  "/api/currencyAndTimestampAddress/:address",
+  getActiveCryptoOnAddress,
+);
 server.get("/api/addressCurrencyAmount/a0324425e7");
 server.get("/api/addressCurrencyAmountSum/a0324425e7");
 server.get("/api/addressAllTransactions/a0324425e7");
@@ -30,11 +33,30 @@ function onEachRequest(request, response, next) {
   next();
 }
 
+async function getActiveCryptoOnAddress(request, response) {
+  const address = request.params.address;
+  const dbResult = await db.query(
+    `
+    select c.symbol, MIN(date) as first, MAX(date) as last
+    from block b
+    join transaction tx on b.block_id =  tx.block_id
+    join transfers tsf on tsf.transaction_id = tx.transaction_id
+    join currency c on tsf.currency_id = c.currency_id
+    JOIN address a ON (tsf.sender_address_id = a.address_id OR tsf.receiver_address_id = a.address_id)
+    where a.address_name= $1
+    group by symbol;  
+    `,
+    [address],
+  );
+
+  response.json(dbResult.rows);
+}
+
 async function transactionsOnBlockHash(request, response) {
   const hash = request.params.hash;
   const dbResult = await db.query(
     `
-    select t.transactions_hash
+    select t.transactions_hash 
     from transaction t
     join block b on t.block_id = b.block_id
     where b.block_hash = $1
