@@ -1,4 +1,4 @@
 currency_id, name, symbol
-0,ETHEREUM,ETH
-1,LINK,LINK
-2,USDC,USDC
+0,ether,ETH
+1,Chainlink,LINK
+2,USD Coin,USDC
