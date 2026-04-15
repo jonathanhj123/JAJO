@@ -61,7 +61,7 @@ with tmp as (
     from transfers t
     join address a on a.address_id = t.receiver_address_id
     join currency c on c.currency_id = t.currency_id
-    where a.address_name = $1
+    where a.address_name = $1 and block.timestamp between 
     group by c.symbol
 union all
     select c.symbol, -sum(t.amount) as amount
@@ -125,5 +125,55 @@ where t.sender_address_id =
 with usd as (
 
 select 
-
 )
+
+with received as (
+    select c.symbol, sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.receiver_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = 'a0324425e7'
+    group by c.symbol), userSent as(
+    select c.symbol, -sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.sender_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = 'a0324425e7'
+    group by c.symbol
+    )
+select r.symbol, r.amount, us.amount
+from received r
+join userSent us on us.sender_address_id = r.receiver_address_id
+
+
+
+
+
+with tmp as (
+    select c.symbol, sum(t.amount) as received, 0 as sent, 0 as received_usd, 0 as sent_usd
+    from transfers t
+    join address a on a.address_id = t.receiver_address_id
+    join currency c on c.currency_id = t.currency_id
+    join transaction tx on tx.transaction_id = t.transaction_id
+    join block b on b.block_id = tx.block_id
+    join pricepoints pp on pp.currency_id = c.currency_id
+    where a.address_name = 'a0324425e7' and b.date between '2026-03-02T00:00:00Z' and '2026-03-11T00:00:00Z' 
+    group by c.symbol
+union all
+    select c.symbol,0 as received, sum(t.amount) as sent, 0 as received_usd, 0 as sent_usd
+    from transfers t
+    join address a on a.address_id = t.sender_address_id
+    join currency c on c.currency_id = t.currency_id
+    join transaction tx on tx.transaction_id = t.transaction_id
+    join block b on b.block_id = tx.block_id
+    join pricepoints pp on pp.currency_id = c.currency_id
+    where a.address_name = 'a0324425e7' and b.date between '2026-03-02T00:00:00Z' and '2026-03-11T00:00:00Z' 
+    group by c.symbol
+    )
+select symbol, sum(received) as received, sum(sent) as sent, sum(received_usd) as received_usd, sum(sent_usd) as sent_usd
+from tmp
+group by symbol;
+
+
+
+(select usd_price from pricepoints pp where pp.timestamp <= b.date and currency_id = c.currency_id order by timestamp desc limit 1)
