@@ -19,7 +19,7 @@ server.get(
   "/api/currencyAndTimestampAddress/:address",
   getActiveCryptoOnAddress,
 );
-server.get("/api/addressCurrencyAmount/a0324425e7");
+server.get("/api/addressCurrencyAmount/:address", GetAmountOnAddress);
 server.get("/api/addressCurrencyAmountSum/a0324425e7");
 server.get("/api/addressAllTransactions/a0324425e7");
 server.listen(port, onServerReady);
@@ -31,6 +31,35 @@ function onServerReady() {
 function onEachRequest(request, response, next) {
   console.log(new Date(), request.method, request.url);
   next();
+}
+
+async function GetAmountOnAddress(request, response) {
+  const address = request.params.address;
+  const dbResult = await db.query(
+    `
+    with tmp as (
+    select c.symbol, sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.receiver_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.symbol
+union all
+    select c.symbol, -sum(t.amount) as amount
+    from transfers t
+    join address a on a.address_id = t.sender_address_id
+    join currency c on c.currency_id = t.currency_id
+    where a.address_name = $1
+    group by c.symbol
+    )
+select symbol, sum(amount)
+from tmp
+group by symbol;
+    `,
+    [address],
+  );
+
+  response.json(dbResult.rows);
 }
 
 async function getActiveCryptoOnAddress(request, response) {
@@ -106,7 +135,7 @@ async function getActiveAdresses(request, response) {
     JOIN transfers t ON (
         t.sender_address_id = a.address_id
         OR t.receiver_address_id = a.address_id
-    )
+    ) 
     JOIN currency c ON c.currency_id = t.currency_id
     WHERE c.symbol = $1;
     `,
