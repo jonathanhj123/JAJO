@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", function () {
   renderCart();
   updatePricingSummary();
 
-  document.getElementById("btn-mobilepay").addEventListener("click", handleMobilePay);
-  document.getElementById("btn-pay-bar").addEventListener("click", handlePayAtBar);
+  document
+    .getElementById("btn-mobilepay")
+    .addEventListener("click", handleMobilePay);
+  document
+    .getElementById("btn-pay-bar")
+    .addEventListener("click", handlePayAtBar);
 });

@@ -36,7 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
   updateCartBadge();
   renderResults(SONGS);
 
-  document.getElementById("search-input").addEventListener("input", function () {
-    // TODO: call filterSongs with this.value, then pass result to renderResults
-  });
+  document
+    .getElementById("search-input")
+    .addEventListener("input", function () {
+      // TODO: call filterSongs with this.value, then pass result to renderResults
+    });
 });

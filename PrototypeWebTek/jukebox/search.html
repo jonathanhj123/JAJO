@@ -1,64 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Search — Jukebox</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
-        }
-      }
-    }
-  </script>
-</head>
-<body class="bg-[#0d0d0d] text-white font-sans min-h-screen antialiased">
-  <div class="max-w-[1024px] mx-auto min-h-screen flex flex-col">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Search — Jukebox</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-[#0d0d0d] text-white font-sans min-h-screen antialiased">
+    <div class="max-w-[1024px] mx-auto min-h-screen flex flex-col">
+      <!-- Top bar -->
+      <header class="flex items-center justify-between h-14 px-4 shrink-0">
+        <a
+          href="index.html"
+          class="w-11 h-11 flex items-center justify-center rounded-full text-white active:bg-zinc-800 transition-colors"
+          aria-label="Back"
+        >
+          <svg
+            class="w-5 h-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </a>
+        <span class="text-[17px] font-semibold">Search</span>
 
-    <!-- Top bar -->
-    <header class="flex items-center justify-between h-14 px-4 shrink-0">
-      <a href="index.html" class="w-11 h-11 flex items-center justify-center rounded-full text-white active:bg-zinc-800 transition-colors" aria-label="Back">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </a>
-      <span class="text-[17px] font-semibold">Search</span>
+        <!-- Cart icon — updateCartBadge() shows/hides #cart-badge -->
+        <a
+          href="cart.html"
+          class="relative w-11 h-11 flex items-center justify-center rounded-full text-white active:bg-zinc-800 transition-colors"
+          aria-label="Cart"
+        >
+          <svg
+            class="w-[22px] h-[22px]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path
+              d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+            ></path>
+          </svg>
+          <span
+            id="cart-badge"
+            class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none hidden"
+            >0</span
+          >
+        </a>
+      </header>
 
-      <!-- Cart icon — updateCartBadge() shows/hides #cart-badge -->
-      <a href="cart.html" class="relative w-11 h-11 flex items-center justify-center rounded-full text-white active:bg-zinc-800 transition-colors" aria-label="Cart">
-        <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9" cy="21" r="1"></circle>
-          <circle cx="20" cy="21" r="1"></circle>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-        </svg>
-        <span id="cart-badge" class="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none hidden">0</span>
-      </a>
-    </header>
+      <!-- Search input — "input" event listener added in search.js -->
+      <div class="px-4 pt-2 pb-4 shrink-0">
+        <input
+          id="search-input"
+          type="search"
+          class="w-full h-16 bg-zinc-800 border border-zinc-700 rounded-2xl px-5 text-white text-lg font-sans outline-none placeholder-zinc-500 focus:border-zinc-500 transition-colors"
+          placeholder="Artist or song name..."
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
 
-    <!-- Search input — "input" event listener added in search.js -->
-    <div class="px-4 pt-2 pb-4 shrink-0">
-      <input
-        id="search-input"
-        type="search"
-        class="w-full h-16 bg-zinc-800 border border-zinc-700 rounded-2xl px-5 text-white text-lg font-sans outline-none placeholder-zinc-500 focus:border-zinc-500 transition-colors"
-        placeholder="Artist or song name..."
-        autocomplete="off"
-        spellcheck="false"
-      />
+      <!-- Results — renderResults() populates this list -->
+      <ul
+        id="results-list"
+        class="flex-1 overflow-y-auto border-t border-zinc-800 no-scrollbar"
+      >
+        <!-- populated by renderResults() in search.js -->
+      </ul>
     </div>
 
-    <!-- Results — renderResults() populates this list -->
-    <ul id="results-list" class="flex-1 overflow-y-auto border-t border-zinc-800 no-scrollbar">
-      <!-- populated by renderResults() in search.js -->
-    </ul>
-
-  </div>
-
-  <script src="js/data.js"></script>
-  <script src="js/search.js"></script>
-</body>
+    <script src="js/data.js"></script>
+    <script src="js/search.js"></script>
+  </body>
 </html>
