@@ -33,8 +33,8 @@ function handlePayAtBar() {
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", function () {
-  buildSongs();
+document.addEventListener("DOMContentLoaded", async function () {
+  await buildSongs();
   loadCart();
   renderCart();
   updatePricingSummary();

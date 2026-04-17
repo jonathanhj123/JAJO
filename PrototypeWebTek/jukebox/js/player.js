@@ -29,8 +29,8 @@ function updateProgressTime(currentTime, totalTime) {
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", function () {
-  buildSongs();
+document.addEventListener("DOMContentLoaded", async function () {
+  await buildSongs();
   loadCart();
   renderNowPlaying();
   renderQueue();

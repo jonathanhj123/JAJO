@@ -31,8 +31,8 @@ function handleAddToCart(songId) {
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", function () {
-  buildSongs();
+document.addEventListener("DOMContentLoaded", async function () {
+  await buildSongs();
   loadCart();
   updateCartBadge();
   renderResults(SONGS);
