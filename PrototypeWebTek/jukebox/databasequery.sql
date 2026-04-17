@@ -35,3 +35,13 @@ ALTER TABLE "songs_song_artist" ADD FOREIGN KEY ("songs_song_id") REFERENCES "so
 
 ALTER TABLE "songs_song_artist" ADD FOREIGN KEY ("song_artist_song_id") REFERENCES "song_artist" ("song_id") DEFERRABLE INITIALLY IMMEDIATE;
 
+    with song_artists as (
+      select string_agg(a.name, ', ' order by a.artist_id) as artist
+      from song_artist sa
+      join artist a on a.artist_id = sa.artist_id
+      group by sa.song_id
+    )
+    select s.song_id, s.title, sa.artist
+    from songs s
+    join song_artists sa on sa.song_id = s.song_id
+    order by s.song_id

@@ -11,10 +11,21 @@ function renderResults(songsToShow) {
   // Hint: give each add button a data-song-id attribute so you can identify it
 }
 
-function filterSongs(query) {
-  // TODO: return a filtered array from SONGS where
-  // song.title or song.artist contains the query string (case-insensitive)
-  // If query is empty, return all SONGS
+async function filterSongs(query) {
+  const response = await fetch("/api/songs/search?q=" + query);
+  const rows = await response.json();
+
+  const results = [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    results.push({
+      id:     row.song_id,
+      title:  row.title,
+      artist: row.artist,
+      color:  getColor(i),
+    });
+  }
+  return results;
 }
 
 function updateCartBadge() {
@@ -37,7 +48,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   updateCartBadge();
   renderResults(SONGS);
 
-  document.getElementById("search-input").addEventListener("input", function () {
-    // TODO: call filterSongs with this.value, then pass result to renderResults
+  document.getElementById("search-input").addEventListener("input", async function () {
+    const results = await filterSongs(this.value);
+    renderResults(results);
   });
 });
