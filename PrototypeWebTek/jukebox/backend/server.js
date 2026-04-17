@@ -6,7 +6,7 @@ const db = pool();
 const port = 3006;
 const server = express();
 
-server.use(express.static("."));
+server.use(express.static("frontend"));
 server.use(onEachRequest);
 
 server.get("/api/songs", getAllSongs);
