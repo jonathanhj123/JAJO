@@ -1,0 +1,360 @@
+JUKEBOX — JavaScript Implementation Guide
+==========================================
+
+RECOMMENDED ORDER
+-----------------
+1. data.js      (shared helpers — everything else depends on this)
+2. search.js    (core user flow — tests data.js immediately)
+3. cart.js      (depends on cart being filled via search)
+4. player.js    (visual only — safe to leave last)
+
+
+════════════════════════════════════════════════════════════════
+STEP 1 — data.js
+════════════════════════════════════════════════════════════════
+
+This file is already set up with SONGS, cart, queue, and constants.
+You only need to fill in the 7 functions below.
+
+Start with the two localStorage functions, then the rest follow naturally.
+
+------------------------------------------------------------
+loadCart()
+------------------------------------------------------------
+  const stored = localStorage.getItem("jukebox_cart");
+  if (stored) {
+    cart = JSON.parse(stored);
+  }
+
+  Note: the user already added localStorage.getItem but forgot to
+  assign the result. Replace that line with the two lines above.
+
+------------------------------------------------------------
+saveCart()
+------------------------------------------------------------
+  localStorage.setItem("jukebox_cart", JSON.stringify(cart));
+
+------------------------------------------------------------
+getSongById(songId)
+------------------------------------------------------------
+  return SONGS.find(function(song) { return song.id === songId; });
+
+  Tip: implement this one before addToCart — addToCart uses it.
+
+------------------------------------------------------------
+isCartFull()
+------------------------------------------------------------
+  return cart.length >= CART_MAX;
+
+------------------------------------------------------------
+isSongInCart(songId)
+------------------------------------------------------------
+  return cart.some(function(song) { return song.id === songId; });
+
+------------------------------------------------------------
+addToCart(songId)
+------------------------------------------------------------
+  if (isCartFull()) return false;
+  if (isSongInCart(songId)) return false;
+  var song = getSongById(songId);
+  if (!song) return false;
+  cart.push(song);
+  saveCart();
+  return true;
+
+------------------------------------------------------------
+removeFromCart(songId)
+------------------------------------------------------------
+  cart = cart.filter(function(song) { return song.id !== songId; });
+  saveCart();
+
+------------------------------------------------------------
+getCartTotal()
+------------------------------------------------------------
+  if (cart.length === 3) return PRICE_BUNDLE;
+  return cart.length * PRICE_SINGLE;
+
+------------------------------------------------------------
+HOW TO TEST data.js
+------------------------------------------------------------
+  Open index.html in the browser, open the Console (F12), and type:
+
+    addToCart(1)          → should return true, cart has 1 song
+    addToCart(1)          → should return false (already in cart)
+    addToCart(2)          → true
+    addToCart(3)          → true
+    addToCart(4)          → false (cart is full)
+    getCartTotal()        → 5  (bundle price)
+    removeFromCart(1)
+    getCartTotal()        → 4  (2 × 2kr)
+    cart                  → should show the array
+
+
+════════════════════════════════════════════════════════════════
+STEP 2 — search.js
+════════════════════════════════════════════════════════════════
+
+------------------------------------------------------------
+updateCartBadge()
+------------------------------------------------------------
+  var badge = document.getElementById("cart-badge");
+  badge.textContent = cart.length;
+  if (cart.length === 0) {
+    badge.classList.add("hidden");
+  } else {
+    badge.classList.remove("hidden");
+  }
+
+------------------------------------------------------------
+filterSongs(query)
+------------------------------------------------------------
+  if (!query) return SONGS;
+  var lower = query.toLowerCase();
+  return SONGS.filter(function(song) {
+    return song.title.toLowerCase().includes(lower)
+        || song.artist.toLowerCase().includes(lower);
+  });
+
+------------------------------------------------------------
+handleAddToCart(songId)
+------------------------------------------------------------
+  addToCart(songId);
+  updateCartBadge();
+  renderResults(filterSongs(document.getElementById("search-input").value));
+
+  Note: re-rendering results after adding makes the "Full" buttons
+  appear immediately without needing a page reload.
+
+------------------------------------------------------------
+renderResults(songsToShow)
+------------------------------------------------------------
+  This is the biggest function. It builds the list HTML.
+
+  var list = document.getElementById("results-list");
+  list.innerHTML = "";   // clear previous results
+
+  songsToShow.forEach(function(song) {
+    var li = document.createElement("li");
+    li.className = "flex items-center gap-3 px-5 py-2.5 border-b border-zinc-800 min-h-[68px]";
+
+    var full = isCartFull() || isSongInCart(song.id);
+
+    li.innerHTML =
+      '<div class="w-12 h-12 rounded-md shrink-0" style="background:' + song.color + '"></div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<p class="text-[15px] font-medium truncate">' + song.title + '</p>' +
+        '<p class="text-[13px] text-zinc-500 mt-0.5 truncate">' + song.artist + '</p>' +
+      '</div>' +
+      '<button ' +
+        'data-song-id="' + song.id + '" ' +
+        (full ? 'disabled ' : '') +
+        'class="shrink-0 h-[34px] px-3.5 rounded-full border text-[13px] font-semibold ' +
+        (full
+          ? 'border-zinc-700 text-zinc-600 cursor-not-allowed'
+          : 'border-white text-white') +
+        '">' +
+        (full ? 'Full' : '2 kr') +
+      '</button>';
+
+    // Attach click listener only if not disabled
+    if (!full) {
+      li.querySelector("button").addEventListener("click", function() {
+        handleAddToCart(song.id);
+      });
+    }
+
+    list.appendChild(li);
+  });
+
+------------------------------------------------------------
+Search input wiring (already stubbed in DOMContentLoaded)
+------------------------------------------------------------
+  Replace the TODO comment in the input event listener with:
+
+    var results = filterSongs(this.value);
+    renderResults(results);
+
+------------------------------------------------------------
+HOW TO TEST search.js
+------------------------------------------------------------
+  Open search.html in the browser:
+  - Results should load automatically (all 16 songs)
+  - Type "weeknd" → should show only Weeknd songs
+  - Type something random → should show nothing
+  - Click "2 kr" on a song → badge on cart icon updates
+  - Add 3 songs → remaining buttons show "Full"
+
+
+════════════════════════════════════════════════════════════════
+STEP 3 — cart.js
+════════════════════════════════════════════════════════════════
+
+------------------------------------------------------------
+renderCart()
+------------------------------------------------------------
+  var list = document.getElementById("cart-list");
+  list.innerHTML = "";
+
+  if (cart.length === 0) {
+    list.innerHTML =
+      '<li class="px-5 py-8 text-center text-zinc-500">Your cart is empty</li>';
+    return;
+  }
+
+  cart.forEach(function(song) {
+    var li = document.createElement("li");
+    li.className = "flex items-center gap-3 px-5 py-2.5 border-b border-zinc-800 min-h-[68px]";
+
+    li.innerHTML =
+      '<div class="w-12 h-12 rounded-md shrink-0" style="background:' + song.color + '"></div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<p class="text-[15px] font-medium truncate">' + song.title + '</p>' +
+        '<p class="text-[13px] text-zinc-500 mt-0.5 truncate">' + song.artist + '</p>' +
+      '</div>' +
+      '<span class="text-[14px] font-semibold text-zinc-400 shrink-0">2 kr</span>' +
+      '<button data-song-id="' + song.id + '" ' +
+        'class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 flex items-center justify-center shrink-0 text-lg">&#x2715;</button>';
+
+    li.querySelector("button").addEventListener("click", function() {
+      handleRemove(song.id);
+    });
+
+    list.appendChild(li);
+  });
+
+------------------------------------------------------------
+updatePricingSummary()
+------------------------------------------------------------
+  document.getElementById("total-label").textContent =
+    "Total  ·  " + cart.length + (cart.length === 1 ? " song" : " songs");
+
+  document.getElementById("total-price").textContent =
+    getCartTotal() + " kr";
+
+  // Highlight the bundle row if cart is full
+  var bundleRow = document.getElementById("price-row-bundle");
+  if (cart.length === 3) {
+    bundleRow.classList.add("text-emerald-400", "bg-emerald-950/30", "font-semibold");
+    bundleRow.classList.remove("text-zinc-500");
+  } else {
+    bundleRow.classList.remove("text-emerald-400", "bg-emerald-950/30", "font-semibold");
+    bundleRow.classList.add("text-zinc-500");
+  }
+
+------------------------------------------------------------
+handleRemove(songId)
+------------------------------------------------------------
+  removeFromCart(songId);
+  renderCart();
+  updatePricingSummary();
+
+------------------------------------------------------------
+handleMobilePay() and handlePayAtBar()
+------------------------------------------------------------
+  These are up to you — for the prototype, a simple alert works:
+
+  function handleMobilePay() {
+    alert("Opening MobilePay...");
+  }
+
+  function handlePayAtBar() {
+    alert("Please pay at the bar. Thank you!");
+  }
+
+------------------------------------------------------------
+HOW TO TEST cart.js
+------------------------------------------------------------
+  1. Go to search.html, add 2 songs to the cart
+  2. Click the cart icon → should see both songs listed
+  3. Total should show "4 kr"
+  4. Add a 3rd song via search, go back to cart
+     → Total shows "5 kr", bundle row turns green
+  5. Click × on a song → it disappears, total updates
+  6. Click MobilePay / Pay at bar → alert appears
+
+
+════════════════════════════════════════════════════════════════
+STEP 4 — player.js
+════════════════════════════════════════════════════════════════
+
+------------------------------------------------------------
+renderNowPlaying()
+------------------------------------------------------------
+  document.getElementById("now-playing-art").style.background = nowPlaying.color;
+  document.getElementById("now-playing-title").textContent = nowPlaying.title;
+  document.getElementById("now-playing-artist").textContent = nowPlaying.artist;
+  document.getElementById("progress-total").textContent = nowPlaying.duration;
+
+------------------------------------------------------------
+renderQueue()
+------------------------------------------------------------
+  var list = document.getElementById("queue-list");
+  list.innerHTML = "";
+
+  queue.forEach(function(song, index) {
+    var li = document.createElement("li");
+    li.className = "flex items-center gap-3 px-5 py-2.5 border-b border-zinc-800 min-h-[60px]";
+
+    li.innerHTML =
+      '<span class="text-[13px] text-zinc-500 w-5 text-center shrink-0">' + (index + 1) + '</span>' +
+      '<div class="w-10 h-10 rounded-md shrink-0" style="background:' + song.color + '"></div>' +
+      '<div class="flex-1 min-w-0">' +
+        '<p class="text-[15px] font-medium truncate">' + song.title + '</p>' +
+        '<p class="text-[13px] text-zinc-500 mt-0.5 truncate">' + song.artist + '</p>' +
+      '</div>';
+
+    list.appendChild(li);
+  });
+
+------------------------------------------------------------
+updateProgress(percent) and updateProgressTime()
+------------------------------------------------------------
+  function updateProgress(percent) {
+    document.getElementById("progress-fill").style.width = percent + "%";
+  }
+
+  function updateProgressTime(currentTime, totalTime) {
+    document.getElementById("progress-current").textContent = currentTime;
+    document.getElementById("progress-total").textContent = totalTime;
+  }
+
+------------------------------------------------------------
+Progress bar simulation (optional, inside DOMContentLoaded)
+------------------------------------------------------------
+  var totalSeconds = 242;   // 4:02
+  var elapsed = 0;
+
+  setInterval(function() {
+    elapsed++;
+    if (elapsed > totalSeconds) elapsed = 0;
+
+    var percent = (elapsed / totalSeconds) * 100;
+    updateProgress(percent);
+
+    var mins = Math.floor(elapsed / 60);
+    var secs = elapsed % 60;
+    updateProgressTime(
+      mins + ":" + (secs < 10 ? "0" : "") + secs,
+      nowPlaying.duration
+    );
+  }, 1000);
+
+
+════════════════════════════════════════════════════════════════
+COMMON MISTAKES TO AVOID
+════════════════════════════════════════════════════════════════
+
+- Forgetting to call saveCart() after modifying the cart array.
+  The cart will reset on page navigation if you don't save it.
+
+- Using == instead of === when comparing song IDs.
+  song.id is a number; data-song-id attributes are strings.
+  Use parseInt(button.dataset.songId) if reading from HTML,
+  or pass the id directly through the closure (as shown above).
+
+- Setting list.innerHTML = "" before adding new items.
+  If you forget to clear first, items will keep stacking up
+  every time renderResults or renderCart is called.
+
+- data.js must be loaded BEFORE search.js / cart.js / player.js.
+  The script tags in the HTML are already in the right order.
