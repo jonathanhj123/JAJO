@@ -39,8 +39,16 @@ await db.query(`
   )
 `);
 
+<<<<<<< HEAD
 await upload(db, "data/songs.csv", `
   copy songs (song_id, artist_id, title, duration)
+=======
+await upload(
+  db,
+  "data/songs.csv",
+  `
+  copy songs (song_id, artist_id, title)
+>>>>>>> origin/Andreas
   from stdin
   with csv header encoding 'utf-8'
 `,
