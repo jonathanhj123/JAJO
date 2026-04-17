@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Jukebox</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#0d0d0d] text-white font-sans antialiased h-screen overflow-hidden">
+  <div class="max-w-[1024px] h-screen mx-auto flex flex-col">
+
+    <!-- Top bar -->
+    <header class="flex items-center justify-between h-20 px-5 shrink-0 border-b border-zinc-800">
+      <span class="text-xs font-bold tracking-[0.18em] text-zinc-500 uppercase">Jukebox</span>
+      <a href="search.html"
+         class="flex items-center justify-center px-4 h-10 rounded-xl text-white bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-600 transition-colors gap-2"
+         aria-label="Search">
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="16.5" y1="16.5" x2="22" y2="22"></line>
+        </svg>
+        <span class="text-sm font-semibold">Search</span>
+      </a>
+    </header>
+
+    <!-- Two-column body -->
+    <div class="flex flex-1 overflow-hidden">
+
+      <!-- Left: Now Playing -->
+      <div class="w-[400px] shrink-0 flex flex-col p-5 gap-4 overflow-hidden">
+
+        <!-- Album art — renderNowPlaying() sets style.background -->
+        <div id="now-playing-art" class="rounded-xl w-full aspect-square"></div>
+
+        <div>
+          <!-- renderNowPlaying() sets textContent on these -->
+          <h1 id="now-playing-title"  class="text-xl font-bold leading-tight tracking-tight truncate">—</h1>
+          <p  id="now-playing-artist" class="text-sm text-zinc-400 mt-1 font-medium">—</p>
+        </div>
+
+        <div>
+          <div class="h-[3px] bg-zinc-800 rounded-full overflow-hidden">
+            <!-- updateProgress() sets style.width on this element -->
+            <div id="progress-fill" class="h-full bg-white rounded-full" style="width: 0%;"></div>
+          </div>
+          <div class="flex justify-between mt-1.5 text-xs text-zinc-500 tabular-nums">
+            <!-- updateProgressTime() sets textContent on these -->
+            <span id="progress-current">0:00</span>
+            <span id="progress-total">0:00</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="w-px bg-zinc-800 my-3"></div>
+
+      <!-- Right: Queue — renderQueue() populates this list -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <h2 class="text-xs font-semibold tracking-[0.1em] uppercase text-zinc-500 px-5 pt-4 pb-2 shrink-0">Up Next</h2>
+        <ul id="queue-list" class="overflow-y-auto flex-1 no-scrollbar">
+          <!-- populated by renderQueue() in player.js -->
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/player.js"></script>
+</body>
+</html>
