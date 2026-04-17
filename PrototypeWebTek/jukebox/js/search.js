@@ -32,15 +32,12 @@ function handleAddToCart(songId) {
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", function () {
-  initData().then(function () {
-    loadCart();
-    updateCartBadge();
-    renderResults(SONGS);
+  buildSongs();
+  loadCart();
+  updateCartBadge();
+  renderResults(SONGS);
 
-    document
-      .getElementById("search-input")
-      .addEventListener("input", function () {
-        // TODO: call filterSongs with this.value, then pass result to renderResults
-      });
+  document.getElementById("search-input").addEventListener("input", function () {
+    // TODO: call filterSongs with this.value, then pass result to renderResults
   });
 });

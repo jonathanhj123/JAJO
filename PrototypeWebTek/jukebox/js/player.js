@@ -30,12 +30,11 @@ function updateProgressTime(currentTime, totalTime) {
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", function () {
-  initData().then(function () {
-    loadCart();
-    renderNowPlaying();
-    renderQueue();
+  buildSongs();
+  loadCart();
+  renderNowPlaying();
+  renderQueue();
 
-    // TODO: start a progress bar timer using setInterval to simulate playback
-    // Hint: increment a counter every second, calculate percent, call updateProgress
-  });
+  // TODO: start a progress bar timer using setInterval to simulate playback
+  // Hint: increment a counter every second, calculate percent, call updateProgress
 });
