@@ -2,7 +2,9 @@ import { connect } from "./connect.js";
 import upload from "pg-upload";
 
 const db = await connect();
-const timestamp = (await db.query("select now() as timestamp")).rows[0]["timestamp"];
+const timestamp = (await db.query("select now() as timestamp")).rows[0][
+  "timestamp"
+];
 console.log(`Recreating jukebox database on ${timestamp}...`);
 
 // Drop old tables (song_artist first because it references the others)
@@ -18,11 +20,15 @@ await db.query(`
   )
 `);
 
-await upload(db, "data/artist.csv", `
+await upload(
+  db,
+  "data/artist.csv",
+  `
   copy artist (artist_id, name)
   from stdin
   with csv header encoding 'utf-8'
-`);
+`,
+);
 
 // Create songs table
 await db.query(`
@@ -33,11 +39,15 @@ await db.query(`
   )
 `);
 
-await upload(db, "data/songs.csv", `
+await upload(
+  db,
+  "data/songs.csv",
+  `
   copy songs (song_id, artist_id, title)
   from stdin
   with csv header encoding 'utf-8'
-`);
+`,
+);
 
 // Create song_artist junction table
 await db.query(`
@@ -47,11 +57,15 @@ await db.query(`
   )
 `);
 
-await upload(db, "data/song_artist.csv", `
+await upload(
+  db,
+  "data/song_artist.csv",
+  `
   copy song_artist (artist_id, song_id)
   from stdin
   with csv header encoding 'utf-8'
-`);
+`,
+);
 
 await db.end();
 console.log("Jukebox database successfully recreated.");
