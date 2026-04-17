@@ -1,187 +1,148 @@
-// ─── Song catalog ────────────────────────────────────────────────────────────
-// Each song object represents one track available in the jukebox.
-// Add or remove songs here to change what appears in search results.
+// ─── Color palette ────────────────────────────────────────────────────────────
+// Assigned to songs by cycling through this list based on song_id.
+// Add more gradients here if you add more songs.
 
-const SONGS = [
-  {
-    id: 1,
-    title: "Blinding Lights",
-    artist: "The Weeknd",
-    duration: "4:02",
-    color: "linear-gradient(135deg, #2d1b33, #4a1942, #6b2d6b)",
-  },
-  {
-    id: 2,
-    title: "As It Was",
-    artist: "Harry Styles",
-    duration: "2:37",
-    color: "linear-gradient(135deg, #0e1a2a, #1b3a5c, #1e5080)",
-  },
-  {
-    id: 3,
-    title: "Stay",
-    artist: "The Kid LAROI, J. Bieber",
-    duration: "2:21",
-    color: "linear-gradient(135deg, #1a2a1a, #1e3a2f, #0d4f3c)",
-  },
-  {
-    id: 4,
-    title: "Bad Guy",
-    artist: "Billie Eilish",
-    duration: "3:14",
-    color: "linear-gradient(135deg, #2a0e0e, #4a1c1c, #6b2020)",
-  },
-  {
-    id: 5,
-    title: "Industry Baby",
-    artist: "Lil Nas X, Jack Harlow",
-    duration: "3:32",
-    color: "linear-gradient(135deg, #2a1a0e, #3d2b1f, #5c3d1e)",
-  },
-  {
-    id: 6,
-    title: "Levitating",
-    artist: "Dua Lipa",
-    duration: "3:23",
-    color: "linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)",
-  },
-  {
-    id: 7,
-    title: "Montero",
-    artist: "Lil Nas X",
-    duration: "2:17",
-    color: "linear-gradient(135deg, #0e1f0e, #1c3d1c, #246b24)",
-  },
-  {
-    id: 8,
-    title: "good 4 u",
-    artist: "Olivia Rodrigo",
-    duration: "2:58",
-    color: "linear-gradient(135deg, #1a1a1a, #2d2d2d, #404040)",
-  },
-  {
-    id: 9,
-    title: "Starboy",
-    artist: "The Weeknd",
-    duration: "3:51",
-    color: "linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)",
-  },
-  {
-    id: 10,
-    title: "Heat Waves",
-    artist: "Glass Animals",
-    duration: "3:59",
-    color: "linear-gradient(135deg, #1a2a1a, #1e3a2f, #0d4f3c)",
-  },
-  {
-    id: 11,
-    title: "Watermelon Sugar",
-    artist: "Harry Styles",
-    duration: "2:54",
-    color: "linear-gradient(135deg, #0e1a2a, #1b3a5c, #1e5080)",
-  },
-  {
-    id: 12,
-    title: "Happier Than Ever",
-    artist: "Billie Eilish",
-    duration: "4:58",
-    color: "linear-gradient(135deg, #2d1b33, #4a1942, #6b2d6b)",
-  },
-  {
-    id: 13,
-    title: "Peaches",
-    artist: "Justin Bieber",
-    duration: "3:18",
-    color: "linear-gradient(135deg, #2a1a0e, #3d2b1f, #5c3d1e)",
-  },
-  {
-    id: 14,
-    title: "Save Your Tears",
-    artist: "The Weeknd",
-    duration: "3:35",
-    color: "linear-gradient(135deg, #2d1b33, #4a1942, #6b2d6b)",
-  },
-  {
-    id: 15,
-    title: "Drivers License",
-    artist: "Olivia Rodrigo",
-    duration: "4:02",
-    color: "linear-gradient(135deg, #0e1f0e, #1c3d1c, #246b24)",
-  },
-  {
-    id: 16,
-    title: "Butter",
-    artist: "BTS",
-    duration: "2:44",
-    color: "linear-gradient(135deg, #1a1a1a, #2d2d2d, #404040)",
-  },
+var COLORS = [
+  "linear-gradient(135deg, #2d1b33, #4a1942, #6b2d6b)",
+  "linear-gradient(135deg, #0e1a2a, #1b3a5c, #1e5080)",
+  "linear-gradient(135deg, #1a2a1a, #1e3a2f, #0d4f3c)",
+  "linear-gradient(135deg, #2a0e0e, #4a1c1c, #6b2020)",
+  "linear-gradient(135deg, #2a1a0e, #3d2b1f, #5c3d1e)",
+  "linear-gradient(135deg, #1a1a2e, #16213e, #0f3460)",
+  "linear-gradient(135deg, #0e1f0e, #1c3d1c, #246b24)",
+  "linear-gradient(135deg, #1a1a1a, #2d2d2d, #404040)",
 ];
+
+// ─── Song catalog ─────────────────────────────────────────────────────────────
+// Populated by initData() — do not add songs here manually.
+// Edit data/songs.csv, data/artist.csv, and data/song_artist.csv instead.
+
+var SONGS = [];
 
 // ─── Playback state ───────────────────────────────────────────────────────────
-// nowPlaying: the song currently being played
-// queue: ordered list of songs coming up next
 
-let nowPlaying = SONGS[0];
-
-let queue = [
-  SONGS[1],
-  SONGS[2],
-  SONGS[3],
-  SONGS[4],
-  SONGS[5],
-  SONGS[6],
-  SONGS[7],
-];
+var nowPlaying = null;
+var queue = [];
 
 // ─── Pricing ──────────────────────────────────────────────────────────────────
 
-const PRICE_SINGLE = 2; // kr per song (1 or 2 songs)
-const PRICE_BUNDLE = 5; // kr for 3 songs
-const CART_MAX = 3;
+var PRICE_SINGLE = 2;   // kr per song (1 or 2 songs)
+var PRICE_BUNDLE  = 5;  // kr for 3 songs
+var CART_MAX      = 3;
 
 // ─── Cart state ───────────────────────────────────────────────────────────────
-// Cart is stored in localStorage so it persists when navigating between pages.
-// cart is an array of song objects (max CART_MAX items).
+// Persisted in localStorage so it survives page navigation.
 
-let cart = [];
+var cart = [];
 
 function loadCart() {
-  // TODO: read cart from localStorage, parse JSON, assign to cart
-  // Hint: use localStorage.getItem("jukebox_cart")
-  // Remember to handle the case where nothing is stored yet (null)
+  var stored = localStorage.getItem("jukebox_cart");
+  if (stored) {
+    cart = JSON.parse(stored);
+  }
 }
 
 function saveCart() {
-  // TODO: write the current cart array to localStorage as JSON
-  // Hint: use localStorage.setItem("jukebox_cart", JSON.stringify(cart))
-}
-
-function addToCart(songId) {
-  // TODO: find the song by id in SONGS
-  // Check cart is not already full (cart.length < CART_MAX)
-  // Check song is not already in cart
-  // Push song to cart, then call saveCart()
-  // Return true if added, false if not
-}
-
-function removeFromCart(songId) {
-  // TODO: filter cart to remove the song with matching id
-  // Call saveCart() after
-}
-
-function isCartFull() {
-  // TODO: return true if cart.length >= CART_MAX
-}
-
-function isSongInCart(songId) {
-  // TODO: return true if a song with this id is already in cart
-}
-
-function getCartTotal() {
-  // TODO: return price based on cart length
-  // 1 song = PRICE_SINGLE, 2 songs = PRICE_SINGLE * 2, 3 songs = PRICE_BUNDLE
+  localStorage.setItem("jukebox_cart", JSON.stringify(cart));
 }
 
 function getSongById(songId) {
-  // TODO: find and return the song from SONGS where song.id === songId
+  return SONGS.find(function (song) { return song.id === songId; });
+}
+
+function isCartFull() {
+  return cart.length >= CART_MAX;
+}
+
+function isSongInCart(songId) {
+  return cart.some(function (song) { return song.id === songId; });
+}
+
+function addToCart(songId) {
+  if (isCartFull()) return false;
+  if (isSongInCart(songId)) return false;
+  var song = getSongById(songId);
+  if (!song) return false;
+  cart.push(song);
+  saveCart();
+  return true;
+}
+
+function removeFromCart(songId) {
+  cart = cart.filter(function (song) { return song.id !== songId; });
+  saveCart();
+}
+
+function getCartTotal() {
+  if (cart.length === 3) return PRICE_BUNDLE;
+  return cart.length * PRICE_SINGLE;
+}
+
+// ─── CSV parser ───────────────────────────────────────────────────────────────
+// Splits a CSV string into an array of plain objects.
+// Each object key is a column header, value is the cell value (always a string).
+
+function parseCSV(text) {
+  var lines = text.trim().split("\n");
+  var headers = lines[0].split(",").map(function (h) { return h.trim(); });
+
+  return lines.slice(1).map(function (line) {
+    var values = line.split(",").map(function (v) { return v.trim(); });
+    var obj = {};
+    headers.forEach(function (header, i) {
+      obj[header] = values[i] !== undefined ? values[i] : "";
+    });
+    return obj;
+  });
+}
+
+// ─── Data loader ─────────────────────────────────────────────────────────────
+// Fetches the three CSV files, parses them, joins the tables, and fills SONGS.
+// Returns a Promise — call .then() to run code after data is ready.
+//
+// Join logic:
+//   For each song row, look up all rows in song_artist where song_id matches.
+//   Use those artist_ids to find artist names, then join them with ", ".
+//   This handles solo songs (one row in song_artist) and collabs (multiple rows).
+
+function initData() {
+  return Promise.all([
+    fetch("data/artist.csv").then(function (r) { return r.text(); }),
+    fetch("data/songs.csv").then(function (r) { return r.text(); }),
+    fetch("data/song_artist.csv").then(function (r) { return r.text(); }),
+  ]).then(function (results) {
+    var artists    = parseCSV(results[0]);
+    var songsRaw   = parseCSV(results[1]);
+    var songArtists = parseCSV(results[2]);
+
+    // Clear and rebuild SONGS from the CSV data
+    SONGS.length = 0;
+
+    songsRaw.forEach(function (row) {
+      var songId = parseInt(row.song_id);
+
+      // Find all artist_ids linked to this song via song_artist
+      var linkedArtistIds = songArtists
+        .filter(function (sa) { return parseInt(sa.song_id) === songId; })
+        .map(function (sa) { return parseInt(sa.artist_id); });
+
+      // Look up each artist name
+      var artistNames = linkedArtistIds.map(function (id) {
+        var match = artists.find(function (a) { return parseInt(a.artist_id) === id; });
+        return match ? match.name : "";
+      }).filter(function (name) { return name !== ""; });
+
+      SONGS.push({
+        id:       songId,
+        title:    row.title,
+        artist:   artistNames.join(", "),
+        duration: row.duration,
+        color:    COLORS[(songId - 1) % COLORS.length],
+      });
+    });
+
+    // Set initial playback state once data is loaded
+    nowPlaying = SONGS[0];
+    queue      = SONGS.slice(1, 8);
+  });
 }

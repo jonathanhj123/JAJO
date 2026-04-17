@@ -34,14 +34,16 @@ function handlePayAtBar() {
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", function () {
-  loadCart();
-  renderCart();
-  updatePricingSummary();
+  initData().then(function () {
+    loadCart();
+    renderCart();
+    updatePricingSummary();
 
-  document
-    .getElementById("btn-mobilepay")
-    .addEventListener("click", handleMobilePay);
-  document
-    .getElementById("btn-pay-bar")
-    .addEventListener("click", handlePayAtBar);
+    document
+      .getElementById("btn-mobilepay")
+      .addEventListener("click", handleMobilePay);
+    document
+      .getElementById("btn-pay-bar")
+      .addEventListener("click", handlePayAtBar);
+  });
 });
