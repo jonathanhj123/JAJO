@@ -29,13 +29,12 @@ await db.query(`
   create table songs (
     song_id   integer unique not null,
     artist_id integer not null references artist (artist_id),
-    title     text not null,
-    duration  text not null
+    title     text not null
   )
 `);
 
 await upload(db, "data/songs.csv", `
-  copy songs (song_id, artist_id, title, duration)
+  copy songs (song_id, artist_id, title)
   from stdin
   with csv header encoding 'utf-8'
 `);
