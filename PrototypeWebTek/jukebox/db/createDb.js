@@ -39,11 +39,8 @@ await db.query(`
   )
 `);
 
-await upload(
-  db,
-  "data/songs.csv",
-  `
-  copy songs (song_id, artist_id, title)
+await upload(db, "data/songs.csv", `
+  copy songs (song_id, artist_id, title, duration)
   from stdin
   with csv header encoding 'utf-8'
 `,
