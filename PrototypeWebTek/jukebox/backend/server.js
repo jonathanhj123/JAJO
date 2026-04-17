@@ -47,7 +47,8 @@ async function getAllSongs(request, response) {
 async function searchSongs(request, response) {
   const query = "%" + (request.query.q || "") + "%";
 
-  const dbResult = await db.query(`
+  const dbResult = await db.query(
+    `
     with song_artists as (
       select sa.song_id, string_agg(a.name, ', ' order by a.artist_id) as artist
       from song_artist sa
@@ -59,7 +60,9 @@ async function searchSongs(request, response) {
     join song_artists sa on sa.song_id = s.song_id
     where s.title ilike $1 or sa.artist ilike $1
     order by s.song_id
-  `, [query]);
+  `,
+    [query],
+  );
 
   response.json(dbResult.rows);
 }
