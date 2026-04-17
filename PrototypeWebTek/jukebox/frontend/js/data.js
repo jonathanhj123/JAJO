@@ -47,11 +47,10 @@ async function buildSongs() {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     SONGS.push({
-      id:       row.song_id,
-      title:    row.title,
-      artist:   row.artist,
-      duration: row.duration,
-      color:    COLORS[(row.song_id - 1) % COLORS.length],
+      id:     row.song_id,
+      title:  row.title,
+      artist: row.artist,
+      color:  COLORS[(row.song_id - 1) % COLORS.length],
     });
   }
 

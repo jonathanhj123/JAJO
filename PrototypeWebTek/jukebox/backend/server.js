@@ -33,7 +33,7 @@ async function getAllSongs(request, response) {
       join artist a on a.artist_id = sa.artist_id
       group by sa.song_id
     )
-    select s.song_id, s.title, s.duration, sa.artist
+    select s.song_id, s.title, sa.artist
     from songs s
     join song_artists sa on sa.song_id = s.song_id
     order by s.song_id
@@ -54,7 +54,7 @@ async function searchSongs(request, response) {
       join artist a on a.artist_id = sa.artist_id
       group by sa.song_id
     )
-    select s.song_id, s.title, s.duration, sa.artist
+    select s.song_id, s.title, sa.artist
     from songs s
     join song_artists sa on sa.song_id = s.song_id
     where s.title ilike $1 or sa.artist ilike $1
