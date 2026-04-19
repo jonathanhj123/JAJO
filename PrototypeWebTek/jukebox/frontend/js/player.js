@@ -1,6 +1,7 @@
 // player.js — controls the Now Playing screen (index.html)
 
 function renderNowPlaying() {
+
   // TODO: update the now-playing section with the current nowPlaying song
   // Elements to update:
   //   #now-playing-art    → set style.background to nowPlaying.color
@@ -15,14 +16,17 @@ function renderNowPlaying() {
   const nowPlayingArtist = document.getElementById("now-playing-artist");
 
   // set nowPlayingArt style to nowPlaying.color
-  nowPlayingArt.innerHTML = `linear-gradient(135deg, ${nowPlaying.color}, #1a1a1a)`;
+  nowPlayingArt.style.background = nowPlaying.color;
   // set nowPlayingTitle text to nowPlaying.tilte
   nowPlayingTitle.innerHTML = nowPlaying.title;
   // set nowPlayingArtist text to nowPlaying.Artist
   nowPlayingArtist.innerHTML = nowPlaying.artist;
+
 }
 
+
 function renderQueue() {
+  
   // TODO: clear #queue-list and re-render it from the queue array
   // For each song in queue, create an <li> with:
   //   - position number (index + 1)
@@ -39,10 +43,10 @@ function renderQueue() {
 
   // A foorEach-loop, which adds the queue into the HTML (The factory line)
   queue.forEach((song, index) =>{
-
+    
     // Create an empty element
     const li = document.createElement("li");
-
+    
     // Styling the new empty element
     li.className = "flex items-center gap-3 p-3 hover:bg-zinc-800 rounded-lg cursor-pointer transition-colors";
 
@@ -75,7 +79,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   await buildSongs();
 
   // When the data is ready, we render the UI
+  // running renderNowPlaying(); function
   renderNowPlaying();
+  // running renderQueue(); function
   renderQueue();
 
 });
