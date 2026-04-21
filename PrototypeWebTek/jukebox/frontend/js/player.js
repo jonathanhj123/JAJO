@@ -1,7 +1,6 @@
 // player.js controls the Now Playing screen in index.html
 
 function renderNowPlaying() {
-
   // set nowPlayingArt to "now-playing-art", from index.html
   const nowPlayingArt = document.getElementById("now-playing-art");
   // set nowPlayingtitle to "now-playing-title", from index.html
@@ -14,27 +13,24 @@ function renderNowPlaying() {
   // set nowPlayingTitle text to nowPlaying.tilte
   nowPlayingTitle.innerHTML = nowPlaying.title;
   // set nowPlayingArtist text to nowPlaying.Artist
-  nowPlayingArtist.innerHTML = nowPlaying.artist;
-
+  nowPlayingArtist.innerHTML = "nowPlaying.artist";
 }
 
-
 function renderQueue() {
-
   // setting queueList to the element "queue-list"
   const queueList = document.getElementById("queue-list");
-  
+
   //Clearing out any of stuff
   queueList.innerHTML = "";
 
   // A foorEach-loop, which adds the queue into the HTML (The factory line)
-  queue.forEach((song, index) =>{
-    
+  queue.forEach((song, index) => {
     // Create an empty element
     const li = document.createElement("li");
-    
+
     // Styling the new empty element
-    li.className = "flex items-center gap-3 p-3 hover:bg-zinc-800 rounded-lg cursor-pointer transition-colors";
+    li.className =
+      "flex items-center gap-3 p-3 hover:bg-zinc-800 rounded-lg cursor-pointer transition-colors";
 
     // Calculate the number of each song in the queue
     const position = index + 1;
@@ -52,15 +48,12 @@ function renderQueue() {
     // Our finished element gets attached tot he <ul> container in the index.html
     // This makes our element visible for the user
     queueList.appendChild(li);
-
-  })
-
+  });
 }
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async function () {
-
   // wait for the songs to be fetched
   await buildSongs();
 
@@ -70,5 +63,4 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // running renderQueue(); function
   renderQueue();
-
 });
