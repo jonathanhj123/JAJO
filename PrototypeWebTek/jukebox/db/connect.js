@@ -12,12 +12,14 @@ const env = {
   ssl: { rejectUnauthorized: false },
 };
 
+// Single connection — used for one-off scripts like createDb.js.
 export async function connect() {
   const client = new pg.Client(env);
   await client.connect();
   return client;
 }
 
+// Connection pool — used by the server so multiple requests can share connections.
 export function pool() {
   return new pg.Pool(env);
 }

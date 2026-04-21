@@ -32,7 +32,9 @@ function renderCart() {
       '" class="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 flex items-center justify-center shrink-0 text-lg">&#x2715;</button>';
 
     li.querySelector("button").addEventListener("click", function () {
-      handleRemove(song.id);
+      removeFromCart(song.id);
+      renderCart();
+      updatePricingSummary();
     });
 
     list.appendChild(li);
@@ -60,12 +62,6 @@ function updatePricingSummary() {
     );
     bundleRow.classList.add("text-zinc-500");
   }
-}
-
-function handleRemove(songId) {
-  removeFromCart(songId);
-  renderCart();
-  updatePricingSummary();
 }
 
 function handleMobilePay() {

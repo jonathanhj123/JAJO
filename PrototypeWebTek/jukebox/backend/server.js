@@ -10,6 +10,7 @@ server.use(express.static("frontend"));
 server.use(onEachRequest);
 
 server.get("/api/songs", getAllSongs);
+server.get("/api/songs/search/:q", searchSongs);
 server.get("/api/songs/search", searchSongs);
 
 server.listen(port, onServerReady);
@@ -45,7 +46,8 @@ async function getAllSongs(request, response) {
 // GET /api/songs/search?q=sometext
 // Returns songs where the title or any artist name contains the query string
 async function searchSongs(request, response) {
-  const query = "%" + (request.query.q || "") + "%";
+  const q = request.params.q || "";
+  const searchTerm = "%" + q + "%";
 
   const dbResult = await db.query(
     `
@@ -61,7 +63,7 @@ async function searchSongs(request, response) {
     where s.title ilike $1 or sa.artist ilike $1
     order by s.song_id
   `,
-    [query],
+    [searchTerm],
   );
 
   response.json(dbResult.rows);
