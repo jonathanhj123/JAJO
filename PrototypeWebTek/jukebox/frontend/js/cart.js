@@ -70,9 +70,7 @@ function handleMobilePay() {
   for (let i = 0; i < cart.length; i++) {
     queue.push(cart[i]);
   }
-  for (let i = 0; i < cart.length; i++) {
-    cart.pop();
-  }
+  cart = [];
 }
 
 function handlePayAtBar() {}
