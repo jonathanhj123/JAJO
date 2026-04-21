@@ -64,7 +64,16 @@ function updatePricingSummary() {
   }
 }
 
-function handleMobilePay() {}
+function handleMobilePay() {
+  // pop from cart array
+  // push to queue array
+  for (let i = 0; i < cart.length; i++) {
+    queue.push(cart[i]);
+  }
+  for (let i = 0; i < cart.length; i++) {
+    cart.pop();
+  }
+}
 
 function handlePayAtBar() {}
 
