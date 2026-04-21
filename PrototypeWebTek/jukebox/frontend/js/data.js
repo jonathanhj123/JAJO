@@ -43,14 +43,14 @@ let cart = [];
 // async/await means: "wait for the server to respond before moving on".
 // await fetch() sends a request to the server and waits for the answer.
 // await response.json() reads the answer and turns it into a JS array.
-
+// Here our data about songs are being loaded
 async function buildSongs() {
   const response = await fetch("/api/songs");
   const rows = await response.json();
 
   // Empty the array before filling it with fresh data from the server
   SONGS.length = 0;
-
+  // The For-Loop is filling the array with data
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     SONGS.push({
@@ -89,7 +89,9 @@ function saveCart() {
   localStorage.setItem("jukebox_cart", JSON.stringify(cart));
 }
 
+// Function that returns every song through their ID
 function getSongById(songId) {
+  //Goes through every song with the help of a For-Loop
   for (let i = 0; i < SONGS.length; i++) {
     if (SONGS[i].id === songId) {
       return SONGS[i];
@@ -98,13 +100,16 @@ function getSongById(songId) {
   return null;
 }
 
+// Function that checks if the cart has reached it's maximum songs
 function isCartFull() {
+  // Return true, if the length of the cart array is larger or equal to the max possible
   if (cart.length >= CART_MAX) {
     return true;
   }
   return false;
 }
 
+// Function that checks every song, if it's in the cart
 function isSongInCart(songId) {
   for (let i = 0; i < cart.length; i++) {
     if (cart[i].id === songId) {
@@ -114,32 +119,42 @@ function isSongInCart(songId) {
   return false;
 }
 
+// adds song into the users cart
 function addToCart(songId) {
+  // if cart is full, it will return false
   if (isCartFull()) return false;
+  // if song is already in cart, it will return false
   if (isSongInCart(songId)) return false;
-
+  // if there isn't a song, it will return false
   const song = getSongById(songId);
   if (!song) return false;
 
+  // if there wasn't any false return, the song gets pushed into card and returns true
   cart.push(song);
   saveCart();
   return true;
 }
 
+// This Function makes a new list and adds all songs, except the song, which got removed
 function removeFromCart(songId) {
   const updated = [];
   for (let i = 0; i < cart.length; i++) {
+    // all songs that aren't the song wished to be removed, are being pushed into updated
     if (cart[i].id !== songId) {
       updated.push(cart[i]);
     }
   }
+  // updated list becomes the new cart
   cart = updated;
   saveCart();
 }
 
+// Function that checks the price
 function getCartTotal() {
+  // if the cart has 3 songs, PRICE_BUNDLE gets returned
   if (cart.length === 3) {
     return PRICE_BUNDLE;
   }
+  // otherwise there won't be a discount
   return cart.length * PRICE_SINGLE;
 }
