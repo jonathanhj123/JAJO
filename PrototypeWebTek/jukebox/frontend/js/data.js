@@ -90,11 +90,21 @@ function saveCart() {
 }
 
 function getSongById(songId) {
-  return SONGS.find(function (song) { return song.id === songId; }) || null;
+  for (let i = 0; i < SONGS.length; i++) {
+    if (SONGS[i].id === songId) {
+      return SONGS[i];
+    }
+  }
+  return null;
 }
 
 function isSongInCart(songId) {
-  return cart.find(function (song) { return song.id === songId; }) !== undefined;
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].id === songId) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function addToCart(songId) {
@@ -110,7 +120,13 @@ function addToCart(songId) {
 }
 
 function removeFromCart(songId) {
-  cart = cart.filter(function (song) { return song.id !== songId; });
+  const updated = [];
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].id !== songId) {
+      updated.push(cart[i]);
+    }
+  }
+  cart = updated;
   saveCart();
 }
 
