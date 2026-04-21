@@ -64,17 +64,11 @@ function updatePricingSummary() {
   }
 }
 
-function handleMobilePay() {
-  // TODO: handle MobilePay payment flow
-  // For now this can show an alert or navigate to a confirmation screen
-}
+function handleMobilePay() {}
 
-function handlePayAtBar() {
-  // TODO: handle pay-at-bar flow
-  // For now this can show an alert or a confirmation message
-}
+function handlePayAtBar() {}
 
-// ─── Entry point ─────────────────────────────────────────────────────────────
+// ─── This is where the magic happens ─────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async function () {
   await buildSongs();
@@ -82,6 +76,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   renderCart();
   updatePricingSummary();
 
-  document.getElementById("btn-mobilepay").addEventListener("click", handleMobilePay);
-  document.getElementById("btn-pay-bar").addEventListener("click", handlePayAtBar);
+  document
+    .getElementById("btn-mobilepay")
+    .addEventListener("click", handleMobilePay);
+  document
+    .getElementById("btn-pay-bar")
+    .addEventListener("click", handlePayAtBar);
 });
