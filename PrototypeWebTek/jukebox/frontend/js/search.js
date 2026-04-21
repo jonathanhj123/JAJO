@@ -23,9 +23,13 @@ function buildButtonHTML(songId, inCart, cartFull) {
 
   return (
     "<button " +
-    'data-song-id="' + songId + '" ' +
+    'data-song-id="' +
+    songId +
+    '" ' +
     disabledAttr +
-    'class="shrink-0 h-[34px] px-3.5 rounded-full border text-[13px] font-semibold ' + style + '">' +
+    'class="shrink-0 h-[34px] px-3.5 rounded-full border text-[13px] font-semibold ' +
+    style +
+    '">' +
     label +
     "</button>"
   );
@@ -35,16 +39,23 @@ function buildButtonHTML(songId, inCart, cartFull) {
 // Attaches a click handler to the Add button if the song can still be added.
 function buildSongListItem(song) {
   const li = document.createElement("li");
-  li.className = "flex items-center gap-3 px-5 py-2.5 border-b border-zinc-800 min-h-[68px]";
+  li.className =
+    "flex items-center gap-3 px-5 py-2.5 border-b border-zinc-800 min-h-[68px]";
 
   const inCart = isSongInCart(song.id);
   const cartFull = cart.length >= CART_MAX;
 
   li.innerHTML =
-    '<div class="w-12 h-12 rounded-md shrink-0" style="background:' + song.color + '"></div>' +
+    '<div class="w-12 h-12 rounded-md shrink-0" style="background:' +
+    song.color +
+    '"></div>' +
     '<div class="flex-1 min-w-0">' +
-    '<p class="text-[15px] font-medium truncate">' + song.title + "</p>" +
-    '<p class="text-[13px] text-zinc-500 mt-0.5 truncate">' + song.artist + "</p>" +
+    '<p class="text-[15px] font-medium truncate">' +
+    song.title +
+    "</p>" +
+    '<p class="text-[13px] text-zinc-500 mt-0.5 truncate">' +
+    song.artist +
+    "</p>" +
     "</div>" +
     buildButtonHTML(song.id, inCart, cartFull);
 
@@ -76,10 +87,10 @@ async function filterSongs(query) {
   const results = [];
   for (let i = 0; i < rows.length; i++) {
     results.push({
-      id:     rows[i].song_id,
-      title:  rows[i].title,
+      id: rows[i].song_id,
+      title: rows[i].title,
       artist: rows[i].artist,
-      color:  getColor(i),
+      color: getColor(i),
     });
   }
 
@@ -109,7 +120,7 @@ async function handleAddToCart(songId) {
   renderResults(results);
 }
 
-// ─── Entry point ─────────────────────────────────────────────────────────────
+// ─── This is where the magic happens ─────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", async function () {
   await buildSongs();
@@ -119,8 +130,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   const results = await filterSongs("");
   renderResults(results);
 
-  document.getElementById("search-input").addEventListener("input", async function () {
-    const results = await filterSongs(this.value);
-    renderResults(results);
-  });
+  document
+    .getElementById("search-input")
+    .addEventListener("input", async function () {
+      const results = await filterSongs(this.value);
+      renderResults(results);
+    });
 });
