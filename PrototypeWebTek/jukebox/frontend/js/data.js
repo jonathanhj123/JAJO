@@ -19,7 +19,7 @@ function getColor(index) {
 }
 
 // ─── Song catalog ─────────────────────────────────────────────────────────────
-// Filled by buildSongs() — do not add songs here directly.
+// Filled by buildSongs()
 // Add songs to the CSV files and re-run: npm run create-db
 
 const SONGS = [];
@@ -54,10 +54,10 @@ async function buildSongs() {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     SONGS.push({
-      id:     row.song_id,
-      title:  row.title,
+      id: row.song_id,
+      title: row.title,
       artist: row.artist,
-      color:  getColor(i),
+      color: getColor(i),
     });
   }
 
