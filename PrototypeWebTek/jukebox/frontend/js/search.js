@@ -70,7 +70,7 @@ function renderResults(songsToShow) {
 // Fetches songs from the server and converts them into display objects.
 // Passing an empty string returns all songs.
 async function filterSongs(query) {
-  const response = await fetch("/api/songs/search?q=" + query);
+  const response = await fetch("/api/songs/search/" + query);
   const rows = await response.json();
 
   const results = [];
