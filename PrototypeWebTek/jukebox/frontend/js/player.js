@@ -1,12 +1,6 @@
-// player.js — controls the Now Playing screen (index.html)
+// player.js controls the Now Playing screen in index.html
 
 function renderNowPlaying() {
-
-  // TODO: update the now-playing section with the current nowPlaying song
-  // Elements to update:
-  //   #now-playing-art    → set style.background to nowPlaying.color
-  //   #now-playing-title  → set textContent to nowPlaying.title
-  //   #now-playing-artist → set textContent to nowPlaying.artist
 
   // set nowPlayingArt to "now-playing-art", from index.html
   const nowPlayingArt = document.getElementById("now-playing-art");
@@ -26,20 +20,12 @@ function renderNowPlaying() {
 
 
 function renderQueue() {
-  
-  // TODO: clear #queue-list and re-render it from the queue array
-  // For each song in queue, create an <li> with:
-  //   - position number (index + 1)
-  //   - album art div with song.color as background
-  //   - song title and artist
-  // Hint: use document.createElement and appendChild, or build innerHTML
 
   // setting queueList to the element "queue-list"
   const queueList = document.getElementById("queue-list");
   
   //Clearing out any of stuff
   queueList.innerHTML = "";
-
 
   // A foorEach-loop, which adds the queue into the HTML (The factory line)
   queue.forEach((song, index) =>{
@@ -81,6 +67,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // When the data is ready, we render the UI
   // running renderNowPlaying(); function
   renderNowPlaying();
+
   // running renderQueue(); function
   renderQueue();
 
